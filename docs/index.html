@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>clipboood - サポート</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.8;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 2.5rem;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #a78bfa;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+
+        ul {
+            margin: 0 0 1rem 1.5rem;
+            color: #ccc;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-card {
+            background: #151515;
+            border: 1px solid #252525;
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+
+        .feature-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 0;
+        }
+
+        .faq-item {
+            background: #151515;
+            border: 1px solid #252525;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .faq-item h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-item p {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 0;
+        }
+
+        .contact-box {
+            background: linear-gradient(135deg, #1a1a3e, #1a1a2e);
+            border: 1px solid #2a2a4e;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-box a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        .links {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #222;
+        }
+
+        .links a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #222;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        @media (max-width: 480px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>clipboood</h1>
+        <p class="tagline">クリップボード履歴をシンプルに管理</p>
+
+        <h2>主な機能</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">📋</div>
+                <h3>自動保存</h3>
+                <p>コピーしたテキストを自動的に履歴に保存。最大30件まで保持します。</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">👆</div>
+                <h3>ワンタップコピー</h3>
+                <p>履歴のテキストをタップするだけで再度コピーできます。</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🖼️</div>
+                <h3>バックグラウンド監視</h3>
+                <p>PiP機能を活用して、アプリを閉じても監視を継続。</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🔒</div>
+                <h3>プライバシー重視</h3>
+                <p>すべてのデータはデバイス内のみに保存。外部送信はしません。</p>
+            </div>
+        </div>
+
+        <h2>よくある質問</h2>
+        <div class="faq-item">
+            <h3>Q. アプリを閉じても履歴は残りますか？</h3>
+            <p>はい。履歴はデバイスに保存されるため、アプリを閉じても消えません。アプリを削除すると履歴も削除されます。</p>
+        </div>
+        <div class="faq-item">
+            <h3>Q. PiPモードとは何ですか？</h3>
+            <p>ピクチャ・イン・ピクチャ（PiP）は、アプリがバックグラウンドでもクリップボードを監視し続けるための機能です。PiPボタンをタップして有効にしてください。</p>
+        </div>
+        <div class="faq-item">
+            <h3>Q.「○○がペーストされました」通知が出ます</h3>
+            <p>これはiOSのセキュリティ機能によるもので、アプリがクリップボードにアクセスした際に自動的に表示されます。本アプリの仕様上避けられないものですが、データは外部に送信されません。</p>
+        </div>
+
+        <h2>お問い合わせ</h2>
+        <div class="contact-box">
+            <p>ご質問・ご要望・不具合報告などがございましたら、以下のメールアドレスまでお気軽にご連絡ください。</p>
+            <p>📧 <a href="mailto:masaru.n.m2026@gmail.com">masaru.n.m2026@gmail.com</a></p>
+        </div>
+
+        <div class="links">
+            <a href="privacy-policy.html">プライバシーポリシー</a>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 clipboood. All rights reserved.
+        </div>
+    </div>
+</body>
+
+</html>
