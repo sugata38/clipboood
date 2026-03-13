@@ -1,5 +1,4 @@
 import SwiftUI
-import AVFoundation
 
 @main
 struct ClipbooodApp: App {
@@ -7,8 +6,7 @@ struct ClipbooodApp: App {
     @Environment(\.scenePhase) var scenePhase
     
     init() {
-        try? AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
-        try? AVAudioSession.sharedInstance().setActive(true)
+        // AVAudioSession の設定は PiPManager.setupPlayer() 内で一元管理
     }
     
     var body: some Scene {

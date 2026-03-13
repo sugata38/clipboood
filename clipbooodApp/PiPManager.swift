@@ -22,8 +22,16 @@ class PiPManager: NSObject, ObservableObject, AVPictureInPictureControllerDelega
         self.looper = AVPlayerLooper(player: queuePlayer, templateItem: templateItem)
         self.player = queuePlayer
         playerLayer.player = queuePlayer
-        try? AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
-        try? AVAudioSession.sharedInstance().setActive(true)
+        
+        // AVAudioSession: PiP映像の再生に必要な最低限の設定
+        // .mixWithOthers で他アプリの音声を妨げない
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("AVAudioSession setup error: \(error)")
+        }
+        
         queuePlayer.play()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             if AVPictureInPictureController.isPictureInPictureSupported() {
@@ -74,13 +82,21 @@ class PiPManager: NSObject, ObservableObject, AVPictureInPictureControllerDelega
         return url
     }
     
+    // MARK: - AVPictureInPictureControllerDelegate
+    
     func pictureInPictureControllerDidStartPictureInPicture(_ pipController: AVPictureInPictureController) {
         DispatchQueue.main.async { self.isPiPActive = true; self.onPiPStarted?() }
-        // PiP起動直後に自動で一時停止（バッテリー節約）
-        self.player?.pause()
+        // 注意: player.pause() は呼ばない。映像再生を維持してPiPウィンドウを保持する。
     }
+    
     func pictureInPictureControllerDidStopPictureInPicture(_ pipController: AVPictureInPictureController) {
         DispatchQueue.main.async { self.isPiPActive = false; self.onPiPStopped?() }
+    }
+    
+    /// バックグラウンドでの音声再生を禁止する（iOS 15+）
+    /// これにより「音声コンテンツを提供していない」ことをシステムに明示する
+    func pictureInPictureControllerShouldProhibitBackgroundAudioPlayback(_ pipController: AVPictureInPictureController) -> Bool {
+        return true
     }
 }
 
