@@ -4,27 +4,45 @@ import AVFoundation
 import Combine
 import SwiftUI
 
+/// PiPの小窓の中に表示されるカスタムUI
+class CustomPiPViewController: AVPictureInPictureVideoCallViewController {
+    let statusLabel = UILabel()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // 背景色を暗いグレーにしてウィジェット風に
+        view.backgroundColor = UIColor(white: 0.1, alpha: 0.95)
+        
+        // ラベルの設定
+        statusLabel.text = "clipboood"
+        statusLabel.textColor = .white
+        statusLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold) // 少し小さめに調整
+        statusLabel.textAlignment = .center
+        statusLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(statusLabel)
+        
+        NSLayoutConstraint.activate([
+            statusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            statusLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
+        // ★ ここが重要：PiPの縦横比を「極端な横長」に指定する
+        // さらに縦幅を細くするため、高さを120から60に変更
+        self.preferredContentSize = CGSize(width: 800, height: 60)
+    }
+}
+
 class PiPManager: NSObject, ObservableObject, AVPictureInPictureControllerDelegate {
     @Published var isPiPActive = false
-    private var player: AVQueuePlayer?
-    private var playerLayer: AVPlayerLayer?
     private var pipController: AVPictureInPictureController?
-    private var looper: AVPlayerLooper?
+    
     var onPiPStarted: (() -> Void)?
     var onPiPStopped: (() -> Void)?
     
-    func setupPlayer(in playerLayer: AVPlayerLayer) {
-        self.playerLayer = playerLayer
-        let videoURL = getOrCreateBlackVideo()
-        let templateItem = AVPlayerItem(url: videoURL)
-        let queuePlayer = AVQueuePlayer()
-        queuePlayer.isMuted = true
-        self.looper = AVPlayerLooper(player: queuePlayer, templateItem: templateItem)
-        self.player = queuePlayer
-        playerLayer.player = queuePlayer
-        
-        // AVAudioSession: PiP映像の再生に必要な最低限の設定
-        // .mixWithOthers で他アプリの音声を妨げない
+    /// ビデオ通話APIを用いてセットアップする
+    func setupPlayer(in sourceView: UIView) {
+        // AVAudioSession: PiPの起動システム要件として必要
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
@@ -32,18 +50,39 @@ class PiPManager: NSObject, ObservableObject, AVPictureInPictureControllerDelega
             print("AVAudioSession setup error: \(error)")
         }
         
-        queuePlayer.play()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             if AVPictureInPictureController.isPictureInPictureSupported() {
-                let controller = AVPictureInPictureController(playerLayer: playerLayer)
-                controller?.delegate = self
+                
+                let pipViewController = CustomPiPViewController()
+                
+                // ★ 初回の正方形化バグを防ぐため、システムにサイズを強制認識させる
+                pipViewController.loadViewIfNeeded()
+                pipViewController.view.layoutIfNeeded()
+                
+                // ★ ビデオ通話用APIを利用（コントロールバーが一切表示されなくなる）
+                let contentSource = AVPictureInPictureController.ContentSource(
+                    activeVideoCallSourceView: sourceView,
+                    contentViewController: pipViewController
+                )
+                
+                let controller = AVPictureInPictureController(contentSource: contentSource)
+                controller.delegate = self
+                controller.canStartPictureInPictureAutomaticallyFromInline = true
                 self.pipController = controller
+                
+                print("VideoCall PiP Controller initialized successfully")
+            } else {
+                print("PiP is not supported on this device/simulator.")
             }
         }
     }
     
     func togglePiP() {
-        guard let controller = pipController else { return }
+        guard let controller = pipController else {
+            print("togglePiP failed: Controller is nil")
+            return
+        }
+        
         if controller.isPictureInPictureActive {
             controller.stopPictureInPicture()
         } else {
@@ -51,50 +90,18 @@ class PiPManager: NSObject, ObservableObject, AVPictureInPictureControllerDelega
         }
     }
     
-    private func getOrCreateBlackVideo() -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("pip_black.mp4")
-        if FileManager.default.fileExists(atPath: url.path) { return url }
-        let writer = try! AVAssetWriter(outputURL: url, fileType: .mp4)
-        let settings: [String: Any] = [
-            AVVideoCodecKey: AVVideoCodecType.h264,
-            AVVideoWidthKey: NSNumber(value: 2),
-            AVVideoHeightKey: NSNumber(value: 2)
-        ]
-        let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
-        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input, sourcePixelBufferAttributes: nil)
-        writer.add(input)
-        writer.startWriting()
-        writer.startSession(atSourceTime: .zero)
-        var pb: CVPixelBuffer?
-        CVPixelBufferCreate(kCFAllocatorDefault, 2, 2, kCVPixelFormatType_32BGRA, nil, &pb)
-        guard let pixelBuffer = pb else { fatalError() }
-        CVPixelBufferLockBaseAddress(pixelBuffer, [])
-        memset(CVPixelBufferGetBaseAddress(pixelBuffer)!, 0, CVPixelBufferGetDataSize(pixelBuffer))
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, [])
-        for i in 0..<10 {
-            while !input.isReadyForMoreMediaData { Thread.sleep(forTimeInterval: 0.01) }
-            adaptor.append(pixelBuffer, withPresentationTime: CMTime(value: CMTimeValue(i), timescale: 10))
-        }
-        input.markAsFinished()
-        let semaphore = DispatchSemaphore(value: 0)
-        writer.finishWriting { semaphore.signal() }
-        semaphore.wait()
-        return url
-    }
-    
     // MARK: - AVPictureInPictureControllerDelegate
     
     func pictureInPictureControllerDidStartPictureInPicture(_ pipController: AVPictureInPictureController) {
         DispatchQueue.main.async { self.isPiPActive = true; self.onPiPStarted?() }
-        // 注意: player.pause() は呼ばない。映像再生を維持してPiPウィンドウを保持する。
     }
     
     func pictureInPictureControllerDidStopPictureInPicture(_ pipController: AVPictureInPictureController) {
         DispatchQueue.main.async { self.isPiPActive = false; self.onPiPStopped?() }
     }
     
-    /// バックグラウンドでの音声再生を禁止する（iOS 15+）
-    /// これにより「音声コンテンツを提供していない」ことをシステムに明示する
+    /// バックグラウンドでの音声再生を禁止する
+    /// システムに音声コンテンツを提供していないことを明示する（審査用）
     func pictureInPictureControllerShouldProhibitBackgroundAudioPlayback(_ pipController: AVPictureInPictureController) -> Bool {
         return true
     }
@@ -102,15 +109,14 @@ class PiPManager: NSObject, ObservableObject, AVPictureInPictureControllerDelega
 
 struct PiPHostView: UIViewRepresentable {
     let pipManager: PiPManager
+    
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
         view.backgroundColor = .clear
-        let playerLayer = AVPlayerLayer()
-        playerLayer.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
-        playerLayer.videoGravity = .resizeAspect
-        view.layer.addSublayer(playerLayer)
-        pipManager.setupPlayer(in: playerLayer)
+        // 単なる透明なViewを基点（出発点）としてPiPに渡す
+        pipManager.setupPlayer(in: view)
         return view
     }
+    
     func updateUIView(_ uiView: UIView, context: Context) {}
 }

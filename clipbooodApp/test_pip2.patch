@@ -1,0 +1,16 @@
+--- PiPManager.swift
++++ PiPManager.swift
+@@ -40,11 +40,14 @@
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+             print("--- PiP Setup ---")
+             print("PiP Supported: \(AVPictureInPictureController.isPictureInPictureSupported())")
++            print("Current AVAudioSession Category: \(AVAudioSession.sharedInstance().category.rawValue)")
++            print("Current AVAudioSession isOtherAudioPlaying: \(AVAudioSession.sharedInstance().isOtherAudioPlaying)")
++            
+             if AVPictureInPictureController.isPictureInPictureSupported() {
+                 let contentSource = AVPictureInPictureController.ContentSource(
+                     sampleBufferDisplayLayer: sampleBufferLayer,
+                     playbackDelegate: self
+                 )
+                 let controller = AVPictureInPictureController(contentSource: contentSource)
+                 print("Controller initialized: \(controller != nil)")

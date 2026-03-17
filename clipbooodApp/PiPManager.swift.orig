@@ -1,0 +1,198 @@
+import Foundation
+import AVKit
+import AVFoundation
+import Combine
+import SwiftUI
+import CoreMedia
+
+class PiPManager: NSObject, ObservableObject, AVPictureInPictureControllerDelegate {
+    @Published var isPiPActive = false
+    
+    private var displayLayer: AVSampleBufferDisplayLayer?
+    private var pipController: AVPictureInPictureController?
+    private var frameTimer: Timer?
+    
+    var onPiPStarted: (() -> Void)?
+    var onPiPStopped: (() -> Void)?
+    
+    func setupPlayer(in sampleBufferLayer: AVSampleBufferDisplayLayer) {
+        self.displayLayer = sampleBufferLayer
+        
+        // AVAudioSession: PiP映像の再生に必要な最低限の設定
+        // .mixWithOthers で他アプリの音声を妨げない
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("AVAudioSession setup error: \(error)")
+        }
+        
+        // 初回フレームをenqueue
+        enqueueSampleBuffer()
+        
+        // 定期的にフレームを供給してPiPを維持(0.5秒ごと)
+        frameTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            self?.enqueueSampleBuffer()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("--- PiP Setup ---")
+            print("PiP Supported: \(AVPictureInPictureController.isPictureInPictureSupported())")
+            if AVPictureInPictureController.isPictureInPictureSupported() {
+                let contentSource = AVPictureInPictureController.ContentSource(
+                    sampleBufferDisplayLayer: sampleBufferLayer,
+                    playbackDelegate: self
+                )
+                let controller = AVPictureInPictureController(contentSource: contentSource)
+                print("Controller initialized: \(controller != nil)")
+                controller.delegate = self
+                self.pipController = controller
+                print("--- PiP Setup Complete ---")
+            } else {
+                print("--- PiP NOT Supported ---")
+            }
+        }
+    }
+    
+    private func enqueueSampleBuffer() {
+        guard let layer = displayLayer else { return }
+        
+        if #available(iOS 17.0, *) {
+            if layer.sampleBufferRenderer.status == .failed {
+                layer.sampleBufferRenderer.flush()
+            }
+        } else {
+            if layer.status == .failed {
+                layer.flush()
+            }
+        }
+        
+        guard let sampleBuffer = createSampleBuffer() else { return }
+        if #available(iOS 17.0, *) {
+            layer.sampleBufferRenderer.enqueue(sampleBuffer)
+        } else {
+            layer.enqueue(sampleBuffer)
+        }
+    }
+    
+    private func createSampleBuffer() -> CMSampleBuffer? {
+        // 2x2の黒いピクセルバッファを生成
+        let width = 2
+        let height = 2
+        
+        var pixelBuffer: CVPixelBuffer?
+        let attrs: [String: Any] = [
+            kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: Any]
+        ]
+        let status = CVPixelBufferCreate(
+            kCFAllocatorDefault,
+            width, height,
+            kCVPixelFormatType_32BGRA,
+            attrs as CFDictionary,
+            &pixelBuffer
+        )
+        guard status == kCVReturnSuccess, let pb = pixelBuffer else { return nil }
+        
+        CVPixelBufferLockBaseAddress(pb, [])
+        memset(CVPixelBufferGetBaseAddress(pb)!, 0, CVPixelBufferGetDataSize(pb))
+        CVPixelBufferUnlockBaseAddress(pb, [])
+        
+        // フォーマット記述を作成
+        var formatDescription: CMFormatDescription?
+        CMVideoFormatDescriptionCreateForImageBuffer(
+            allocator: kCFAllocatorDefault,
+            imageBuffer: pb,
+            formatDescriptionOut: &formatDescription
+        )
+        guard let format = formatDescription else { return nil }
+        
+        // タイミング情報
+        var timingInfo = CMSampleTimingInfo(
+            duration: CMTime(value: 1, timescale: 2),  // 0.5秒
+            presentationTimeStamp: CMClockGetTime(CMClockGetHostTimeClock()),
+            decodeTimeStamp: .invalid
+        )
+        
+        // CMSampleBufferを作成
+        var sampleBuffer: CMSampleBuffer?
+        CMSampleBufferCreateReadyWithImageBuffer(
+            allocator: kCFAllocatorDefault,
+            imageBuffer: pb,
+            formatDescription: format,
+            sampleTiming: &timingInfo,
+            sampleBufferOut: &sampleBuffer
+        )
+        
+        return sampleBuffer
+    }
+    
+    func togglePiP() {
+        guard let controller = pipController else { return }
+        if controller.isPictureInPictureActive {
+            controller.stopPictureInPicture()
+        } else {
+            controller.startPictureInPicture()
+        }
+    }
+    
+    func cleanup() {
+        frameTimer?.invalidate()
+        frameTimer = nil
+    }
+    
+    // MARK: - AVPictureInPictureControllerDelegate
+    
+    func pictureInPictureControllerDidStartPictureInPicture(_ pipController: AVPictureInPictureController) {
+        DispatchQueue.main.async { self.isPiPActive = true; self.onPiPStarted?() }
+    }
+    
+    func pictureInPictureControllerDidStopPictureInPicture(_ pipController: AVPictureInPictureController) {
+        DispatchQueue.main.async { self.isPiPActive = false; self.onPiPStopped?() }
+    }
+    
+    /// バックグラウンドでの音声再生を禁止する
+    /// これにより「音声コンテンツを提供していない」ことをシステムに明示する
+    func pictureInPictureControllerShouldProhibitBackgroundAudioPlayback(_ pipController: AVPictureInPictureController) -> Bool {
+        return true
+    }
+}
+
+// MARK: - AVPictureInPictureSampleBufferPlaybackDelegate
+
+extension PiPManager: AVPictureInPictureSampleBufferPlaybackDelegate {
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, setPlaying playing: Bool) {
+        // 再生/一時停止ボタンのコールバック（何もしない - 常に再生状態）
+    }
+    
+    func pictureInPictureControllerTimeRangeForPlayback(_ pictureInPictureController: AVPictureInPictureController) -> CMTimeRange {
+        // ライブストリーム風にして進捗バーを非表示にする
+        return CMTimeRange(start: .negativeInfinity, duration: .positiveInfinity)
+    }
+    
+    func pictureInPictureControllerIsPlaybackPaused(_ pictureInPictureController: AVPictureInPictureController) -> Bool {
+        return false // 常に再生中
+    }
+    
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, didTransitionToRenderSize newRenderSize: CMVideoDimensions) {
+        // レンダーサイズが変更された時のコールバック
+    }
+    
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, skipByInterval skipInterval: CMTime, completion completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+}
+
+struct PiPHostView: UIViewRepresentable {
+    let pipManager: PiPManager
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .clear
+        let sampleBufferLayer = AVSampleBufferDisplayLayer()
+        sampleBufferLayer.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
+        sampleBufferLayer.videoGravity = .resizeAspect
+        view.layer.addSublayer(sampleBufferLayer)
+        pipManager.setupPlayer(in: sampleBufferLayer)
+        return view
+    }
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}

@@ -10,7 +10,7 @@ struct ContentView: View {
             ZStack {
                 PiPHostView(pipManager: pipManager)
                     .frame(width: 1, height: 1)
-                    .opacity(0)
+                    .opacity(0.01) // 0にするとOSがレンダリングを完全にスキップしてPiPが起動できなくなるため、0.01に設定
                 
                 List {
                     ForEach(clipboardManager.history, id: \.self) { text in
@@ -29,16 +29,7 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("クリップ履歴")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        pipManager.togglePiP()
-                    }) {
-                        Image(systemName: pipManager.isPiPActive ? "pip.fill" : "pip")
-                            .foregroundColor(pipManager.isPiPActive ? .green : .primary)
-                    }
-                }
-            }
+
             .onAppear {
                 generator.prepare()
                 pipManager.onPiPStarted = {

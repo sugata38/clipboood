@@ -1,0 +1,17 @@
+@@ -34,11 +34,16 @@
+         }
+         
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
++            print("PiP Supported: \(AVPictureInPictureController.isPictureInPictureSupported())")
+             if AVPictureInPictureController.isPictureInPictureSupported() {
++                print("Setting up PiP Controller...")
+                 let contentSource = AVPictureInPictureController.ContentSource(
+                     sampleBufferDisplayLayer: sampleBufferLayer,
+                     playbackDelegate: self
+                 )
+                 let controller = AVPictureInPictureController(contentSource: contentSource)
++                print("Controller initialized: \(controller != nil)")
+                 controller.delegate = self
+                 self.pipController = controller
++            } else {
++                print("PiP is NOT supported on this device/simulator.")
