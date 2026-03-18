@@ -27,11 +27,12 @@ enum MonitoringTimeout: String, AppEnum {
     }
 }
 
-/// コントロールセンターのボタンタップ時に実行されるAppIntent
+/// コントロールセンターのボタンタップ時に実行されるIntent
+/// ControlConfigurationIntent: ControlWidgetで使うIntentはこのプロトコルに準拠する必要がある
 /// アプリを開いてPiPによるクリップボード監視を開始する
-struct StartMonitoringIntent: AppIntent {
-    static var title: LocalizedStringResource = "クリップボード監視を開始"
-    static var description = IntentDescription("clipbooodでクリップボードの監視を開始します。")
+struct StartMonitoringIntent: ControlConfigurationIntent {
+    static var title: LocalizedStringResource = "クリップボード自動保存を開始"
+    static var description = IntentDescription("clipbooodでクリップボードの自動保存を開始します。")
     
     /// アプリを開く（PiPの起動にはフォアグラウンドが必要）
     static var openAppWhenRun: Bool = true

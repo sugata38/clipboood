@@ -26,6 +26,9 @@ struct ClipbooodApp: App {
                         if newPhase == .active {
                             // フォアグラウンド復帰時にCC起動要求を確認
                             handlePiPStartRequest()
+                            
+                            // アプリを開いたとき（フォアグラウンド）にもクリップボードの変更があれば履歴に保存
+                            clipboardManager.checkClipboard()
                         }
                     }
             } else {

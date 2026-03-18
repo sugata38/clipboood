@@ -16,9 +16,9 @@ class CustomPiPViewController: AVPictureInPictureVideoCallViewController {
         view.backgroundColor = UIColor(white: 0.1, alpha: 0.95)
         
         // ラベルの設定
-        statusLabel.text = "clipboood 📋"
+        statusLabel.text = "📋 自動保存中"
         statusLabel.textColor = .white
-        statusLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+        statusLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         statusLabel.textAlignment = .center
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(statusLabel)
@@ -29,7 +29,8 @@ class CustomPiPViewController: AVPictureInPictureVideoCallViewController {
         ])
         
         // PiPの縦横比を「極端な横長」に指定し、最小限の画面占有に
-        self.preferredContentSize = CGSize(width: 800, height: 60)
+        // ※ 高さ80: 審査で「操作しにくい」と指摘を受けないよう十分な可視サイズを確保
+        self.preferredContentSize = CGSize(width: 800, height: 80)
     }
 }
 

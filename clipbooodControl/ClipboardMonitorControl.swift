@@ -13,10 +13,10 @@ struct ClipboardMonitorControl: ControlWidget {
         ) { configuration in
             ControlWidgetButton(action: configuration) {
                 // コントロールセンターに表示されるラベル
-                Label("クリップボード監視", systemImage: "clipboard")
+                Label("クリップボード自動保存", systemImage: "clipboard")
             }
         }
-        .displayName("クリップボード監視")
-        .description("clipbooodでクリップボードの監視を開始します。")
+        .displayName("クリップボード自動保存")
+        .description("clipbooodでクリップボードの自動保存を開始します。")
     }
 }

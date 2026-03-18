@@ -101,11 +101,20 @@ class ClipboardManager: ObservableObject {
         timeoutTimer = nil
     }
     
-    /// 指定したテキストをクリップボードにコピーする
+    /// 指定したテキストをクリップボードにコピーし、履歴の一番上に移動する
     func copyToClipboard(text: String) {
         UIPasteboard.general.string = text
         // コピー直後のchangeCountを記録（自分のコピーを再検知しないため）
         lastChangeCount = UIPasteboard.general.changeCount
+        
+        // 履歴の一番上に移動する（すでにある場合は元の位置から削除して先頭に追加）
+        if let index = history.firstIndex(of: text) {
+            if index != 0 {
+                let item = history.remove(at: index)
+                history.insert(item, at: 0)
+                saveHistory()
+            }
+        }
     }
     
     /// 指定インデックスの履歴を削除する

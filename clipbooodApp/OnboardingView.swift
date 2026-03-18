@@ -119,7 +119,7 @@ struct OnboardingView: View {
                 Text("ペースト許可の設定")
                     .font(.title2.weight(.bold))
                 
-                Text("クリップボード監視中に確認ダイアログが\n表示されないようにするための設定です。")
+                Text("クリップボード自動保存中に確認ダイアログが\n表示されないようにするための設定です。")
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -178,7 +178,7 @@ struct OnboardingView: View {
                 Text("コントロールセンターに追加")
                     .font(.title2.weight(.bold))
                 
-                Text("クリップボード監視はコントロールセンターの\nボタンから開始します。")
+                Text("クリップボード自動保存はコントロールセンターの\nボタンから開始します。")
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -188,7 +188,7 @@ struct OnboardingView: View {
                 settingStep(number: 1, text: "画面右上から下にスワイプ")
                 settingStep(number: 2, text: "長押しして編集モードにする")
                 settingStep(number: 3, text: "「コントロールを追加」をタップ")
-                settingStep(number: 4, text: "clipbooodの「監視開始」を追加")
+                settingStep(number: 4, text: "clipbooodの「自動保存開始」を追加")
             }
             .padding(20)
             .background(

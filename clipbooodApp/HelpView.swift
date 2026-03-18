@@ -14,11 +14,11 @@ struct HelpView: View {
                     helpSection(
                         icon: "play.circle.fill",
                         iconColor: .green,
-                        title: "監視を開始する"
+                        title: "自動保存を開始する"
                     ) {
                         VStack(alignment: .leading, spacing: 12) {
                             stepRow(number: 1, text: "画面右上から下にスワイプして\nコントロールセンターを開く")
-                            stepRow(number: 2, text: "「クリップボード監視」ボタンをタップ")
+                            stepRow(number: 2, text: "「クリップボード自動保存」ボタンをタップ")
                             stepRow(number: 3, text: "小さなPiP（ピクチャー・イン・ピクチャー）\nウィンドウが表示されれば成功です")
                         }
                     }
@@ -35,7 +35,7 @@ struct HelpView: View {
                             stepRow(number: 1, text: "コントロールセンターを開く")
                             stepRow(number: 2, text: "何もない場所を長押しして編集モードへ")
                             stepRow(number: 3, text: "「コントロールを追加」をタップ")
-                            stepRow(number: 4, text: "clipbooodの「クリップボード監視」を追加")
+                            stepRow(number: 4, text: "clipbooodの「クリップボード自動保存」を追加")
                         }
                     }
                     
@@ -48,9 +48,9 @@ struct HelpView: View {
                         title: "PiPウィンドウについて"
                     ) {
                         VStack(alignment: .leading, spacing: 8) {
-                            bulletRow("監視中は画面上に小さなウィンドウが表示されます")
+                            bulletRow("記録中は画面上に小さなウィンドウが表示されます")
                             bulletRow("このウィンドウは画面の端にスワイプして隠せます")
-                            bulletRow("PiPを閉じると監視も停止します")
+                            bulletRow("PiPを閉じると自動保存も停止します")
                             bulletRow("タイムアウトを設定すると、指定時間後に自動で停止します")
                         }
                     }
@@ -64,7 +64,7 @@ struct HelpView: View {
                         title: "確認ダイアログを非表示にする"
                     ) {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("監視中に「ペーストを許可しますか？」と表示される場合は、以下の設定を行ってください。")
+                            Text("自動保存中に「ペーストを許可しますか？」と表示される場合は、以下の設定を行ってください。")
                                 .font(.callout)
                                 .foregroundColor(.secondary)
                             

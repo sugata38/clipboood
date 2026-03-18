@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var showClearConfirmation = false
     /// ヘルプ画面の表示フラグ
     @State private var showHelp = false
+    /// タップされた履歴項目のテキスト（ハイライトエフェクト用）
+    @State private var tappedText: String?
     
     var body: some View {
         NavigationView {
@@ -45,32 +47,19 @@ struct ContentView: View {
             }
             .navigationTitle("クリップ履歴")
             .toolbar {
-                // 左: 監視状態インジケーター
-                ToolbarItem(placement: .navigationBarLeading) {
-                    if clipboardManager.isMonitoring {
-                        HStack(spacing: 4) {
-                            Circle()
-                                .fill(.green)
-                                .frame(width: 8, height: 8)
-                            Text("監視中")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-                // 右: ヘルプボタン（小さめ・控えめ）+ 全削除ボタン
+                // 右: ヘルプボタン + 全削除ボタン
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { showHelp = true }) {
                         Image(systemName: "questionmark.circle")
-                            .font(.caption)
+                            .font(.body)
                             .foregroundColor(.secondary)
                     }
                     
                     if !clipboardManager.history.isEmpty {
                         Button(action: { showClearConfirmation = true }) {
                             Image(systemName: "trash")
-                                .font(.caption)
-                                .foregroundColor(.red.opacity(0.7))
+                                .font(.body)
+                                .foregroundColor(.red.opacity(0.8))
                         }
                     }
                 }
@@ -102,6 +91,10 @@ struct ContentView: View {
                 pipManager.onPiPStopped = {
                     clipboardManager.stopMonitoring()
                 }
+                // スクショ制作用の一時コード: 起動と同時にPiPを開始
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    pipManager.startPiP()
+                }
             }
             // コントロールセンターからのPiP起動要求を受信
             .onReceive(
@@ -129,7 +122,7 @@ struct ContentView: View {
             
             VStack(spacing: 8) {
                 Text("コントロールセンターから")
-                Text("「クリップボード監視」を")
+                Text("「自動保存」を")
                 Text("開始してください 📋")
             }
             .font(.subheadline)
@@ -152,50 +145,75 @@ struct ContentView: View {
     /// 履歴リスト
     private var historyListView: some View {
         List {
-            ForEach(Array(clipboardManager.history.enumerated()), id: \.offset) { index, text in
+            // 自動保存ステータスをリストのヘッダーとして表示（見切れ防止）
+            if clipboardManager.isMonitoring {
+                Section {
+                    EmptyView()
+                } header: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "record.circle")
+                            .font(.system(size: 14))
+                            .foregroundColor(.red)
+                            .symbolEffect(.pulse)
+                        Text("自動保存中")
+                            .font(.footnote.weight(.bold))
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }
+                    .textCase(nil)
+                    .padding(.bottom, 4)
+                }
+            }
+            
+            Section {
+                // idを\.selfにすることで、配列の並び替え時に要素が上下にスライド移動するアニメーションが自然になります
+                ForEach(clipboardManager.history, id: \.self) { text in
                 Button(action: {
-                    // タップでクリップボードにコピー
-                    clipboardManager.copyToClipboard(text: text)
+                    // タップを即座にフィードバック
                     generator.impactOccurred()
                     copiedText = String(text.prefix(30))
+                    
+                    // タップされた元の位置で色を変える
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        tappedText = text
+                    }
+                    
                     withAnimation { showCopiedToast = true }
+                    
+                    // エフェクトが終わってワンテンポ経ってから移動＆コピー実行（0.35秒後）
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                        // ここで初めて一番上への移動とクリップボード書き込みが走る
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            clipboardManager.copyToClipboard(text: text)
+                        }
+                        
+                        // ハイライトを解除
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            tappedText = nil
+                        }
+                    }
                     
                     // 1.5秒後にトーストを非表示
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         withAnimation { showCopiedToast = false }
                     }
                 }) {
-                    HStack(spacing: 12) {
-                        // テキスト番号バッジ
-                        Text("\(index + 1)")
-                            .font(.caption2.weight(.bold))
-                            .foregroundColor(.white)
-                            .frame(width: 24, height: 24)
-                            .background(Color.accentColor.opacity(0.8))
-                            .clipShape(Circle())
-                        
-                        // テキスト内容
-                        Text(text)
-                            .lineLimit(3)
-                            .font(.body)
-                            .foregroundColor(.primary)
-                        
-                        Spacer()
-                        
-                        // コピーアイコン
-                        Image(systemName: "doc.on.doc")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 10) // 上下パディングで最低60ptのタップ領域を確保
-                    .contentShape(Rectangle()) // タップ領域を行全体に拡張
+                    Text(text)
+                        .lineLimit(3)
+                        .font(.body)
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 10)
+                        .contentShape(Rectangle()) // タップ領域を行全体に拡張
                 }
                 .buttonStyle(PlainButtonStyle())
+                .listRowBackground(tappedText == text ? Color.gray.opacity(0.3) : Color(UIColor.secondarySystemGroupedBackground))
             }
             .onDelete { offsets in
                 // スワイプ削除
                 clipboardManager.deleteItem(at: offsets)
             }
+            } // End of Section
         }
         .listStyle(.insetGrouped)
     }
