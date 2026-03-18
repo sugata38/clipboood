@@ -91,10 +91,6 @@ struct ContentView: View {
                 pipManager.onPiPStopped = {
                     clipboardManager.stopMonitoring()
                 }
-                // スクショ制作用の一時コード: 起動と同時にPiPを開始
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    pipManager.startPiP()
-                }
             }
             // コントロールセンターからのPiP起動要求を受信
             .onReceive(
