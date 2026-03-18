@@ -6,8 +6,41 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7D267D742F6AE72C00DB2D29 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D267D732F6AE72C00DB2D29 /* WidgetKit.framework */; };
+		7D267D762F6AE72C00DB2D29 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D267D752F6AE72C00DB2D29 /* SwiftUI.framework */; };
+		7D267D832F6AE72C00DB2D29 /* clipbooodControlExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7D267D712F6AE72C00DB2D29 /* clipbooodControlExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7D267D812F6AE72C00DB2D29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B35D52F2F4FBFD000A577F2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D267D702F6AE72C00DB2D29;
+			remoteInfo = clipbooodControlExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7D267D842F6AE72C00DB2D29 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7D267D832F6AE72C00DB2D29 /* clipbooodControlExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4B35D5372F4FBFD000A577F2 /* clipbooodApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = clipbooodApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D267D712F6AE72C00DB2D29 /* clipbooodControlExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = clipbooodControlExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D267D732F6AE72C00DB2D29 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		7D267D752F6AE72C00DB2D29 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -18,6 +51,20 @@
 			);
 			target = 4B35D5362F4FBFD000A577F2 /* clipbooodApp */;
 		};
+		7D267D882F6AE72C00DB2D29 /* Exceptions for "clipbooodControl" folder in "clipbooodControlExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7D267D702F6AE72C00DB2D29 /* clipbooodControlExtension */;
+		};
+		7D267D922F6AEBB000DB2D29 /* Exceptions for "clipbooodApp" folder in "clipbooodControlExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				StartMonitoringIntent.swift,
+			);
+			target = 7D267D702F6AE72C00DB2D29 /* clipbooodControlExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -25,8 +72,17 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				4B35D54B2F506E6100A577F2 /* Exceptions for "clipbooodApp" folder in "clipbooodApp" target */,
+				7D267D922F6AEBB000DB2D29 /* Exceptions for "clipbooodApp" folder in "clipbooodControlExtension" target */,
 			);
 			path = clipbooodApp;
+			sourceTree = "<group>";
+		};
+		7D267D772F6AE72C00DB2D29 /* clipbooodControl */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7D267D882F6AE72C00DB2D29 /* Exceptions for "clipbooodControl" folder in "clipbooodControlExtension" target */,
+			);
+			path = clipbooodControl;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -39,6 +95,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7D267D6E2F6AE72C00DB2D29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D267D762F6AE72C00DB2D29 /* SwiftUI.framework in Frameworks */,
+				7D267D742F6AE72C00DB2D29 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -46,6 +111,8 @@
 			isa = PBXGroup;
 			children = (
 				4B35D5392F4FBFD000A577F2 /* clipbooodApp */,
+				7D267D772F6AE72C00DB2D29 /* clipbooodControl */,
+				7D267D722F6AE72C00DB2D29 /* Frameworks */,
 				4B35D5382F4FBFD000A577F2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,8 +121,18 @@
 			isa = PBXGroup;
 			children = (
 				4B35D5372F4FBFD000A577F2 /* clipbooodApp.app */,
+				7D267D712F6AE72C00DB2D29 /* clipbooodControlExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7D267D722F6AE72C00DB2D29 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7D267D732F6AE72C00DB2D29 /* WidgetKit.framework */,
+				7D267D752F6AE72C00DB2D29 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,10 +145,12 @@
 				4B35D5332F4FBFD000A577F2 /* Sources */,
 				4B35D5342F4FBFD000A577F2 /* Frameworks */,
 				4B35D5352F4FBFD000A577F2 /* Resources */,
+				7D267D842F6AE72C00DB2D29 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7D267D822F6AE72C00DB2D29 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				4B35D5392F4FBFD000A577F2 /* clipbooodApp */,
@@ -83,6 +162,28 @@
 			productReference = 4B35D5372F4FBFD000A577F2 /* clipbooodApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		7D267D702F6AE72C00DB2D29 /* clipbooodControlExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D267D872F6AE72C00DB2D29 /* Build configuration list for PBXNativeTarget "clipbooodControlExtension" */;
+			buildPhases = (
+				7D267D6D2F6AE72C00DB2D29 /* Sources */,
+				7D267D6E2F6AE72C00DB2D29 /* Frameworks */,
+				7D267D6F2F6AE72C00DB2D29 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7D267D772F6AE72C00DB2D29 /* clipbooodControl */,
+			);
+			name = clipbooodControlExtension;
+			packageProductDependencies = (
+			);
+			productName = clipbooodControlExtension;
+			productReference = 7D267D712F6AE72C00DB2D29 /* clipbooodControlExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -90,11 +191,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2620;
+				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					4B35D5362F4FBFD000A577F2 = {
 						CreatedOnToolsVersion = 26.2;
+					};
+					7D267D702F6AE72C00DB2D29 = {
+						CreatedOnToolsVersion = 26.3;
 					};
 				};
 			};
@@ -113,12 +217,20 @@
 			projectRoot = "";
 			targets = (
 				4B35D5362F4FBFD000A577F2 /* clipbooodApp */,
+				7D267D702F6AE72C00DB2D29 /* clipbooodControlExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4B35D5352F4FBFD000A577F2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D267D6F2F6AE72C00DB2D29 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +247,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7D267D6D2F6AE72C00DB2D29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7D267D822F6AE72C00DB2D29 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D267D702F6AE72C00DB2D29 /* clipbooodControlExtension */;
+			targetProxy = 7D267D812F6AE72C00DB2D29 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4B35D5402F4FBFD200A577F2 /* Debug */ = {
@@ -333,6 +460,68 @@
 			};
 			name = Release;
 		};
+		7D267D852F6AE72C00DB2D29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GZZZ8L8DTX;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = clipbooodControl/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = clipbooodControl;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.miyake.clipbooodApp.clipbooodControl;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7D267D862F6AE72C00DB2D29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GZZZ8L8DTX;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = clipbooodControl/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = clipbooodControl;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.miyake.clipbooodApp.clipbooodControl;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -350,6 +539,15 @@
 			buildConfigurations = (
 				4B35D5432F4FBFD200A577F2 /* Debug */,
 				4B35D5442F4FBFD200A577F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D267D872F6AE72C00DB2D29 /* Build configuration list for PBXNativeTarget "clipbooodControlExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D267D852F6AE72C00DB2D29 /* Debug */,
+				7D267D862F6AE72C00DB2D29 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
