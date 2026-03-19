@@ -5,6 +5,25 @@ import SwiftUI
 struct HelpView: View {
     @Environment(\.dismiss) var dismiss
     
+    /// タイムアウト設定用
+    @AppStorage("MonitoringTimeoutMinutes") private var timeoutMinutes: Int = 5
+    @AppStorage("TimeoutExplicitlySetToZero") private var timeoutExplicitlySetToZero: Bool = false
+    
+    private var timeoutBinding: Binding<Int> {
+        Binding(
+            get: {
+                if timeoutMinutes == 0 && !timeoutExplicitlySetToZero {
+                    return 5 // デフォルト値
+                }
+                return timeoutMinutes
+            },
+            set: { newValue in
+                timeoutMinutes = newValue
+                timeoutExplicitlySetToZero = (newValue == 0)
+            }
+        )
+    }
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -51,7 +70,41 @@ struct HelpView: View {
                             bulletRow("記録中は画面上に小さなウィンドウが表示されます")
                             bulletRow("このウィンドウは画面の端にスワイプして隠せます")
                             bulletRow("PiPを閉じると自動保存も停止します")
-                            bulletRow("タイムアウトを設定すると、指定時間後に自動で停止します")
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // セクション3-2: タイムアウト設定（新規）
+                    helpSection(
+                        icon: "timer",
+                        iconColor: .pink,
+                        title: "自動保存の停止時間（タイムアウト）"
+                    ) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("バッテリー消費を防ぐため、指定した時間が経過すると自動保存は自動的に停止します。")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                            
+                            HStack {
+                                Text("停止までの時間")
+                                    .font(.callout.weight(.medium))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Picker("タイムアウト", selection: timeoutBinding) {
+                                    Text("1分").tag(1)
+                                    Text("5分").tag(5)
+                                    Text("15分").tag(15)
+                                    Text("30分").tag(30)
+                                    Text("制限なし").tag(0)
+                                }
+                                .pickerStyle(MenuPickerStyle())
+                                .tint(.accentColor)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color(UIColor.secondarySystemGroupedBackground))
+                            .cornerRadius(10)
                         }
                     }
                     

@@ -28,24 +28,13 @@ enum MonitoringTimeout: String, AppEnum {
 }
 
 /// コントロールセンターのボタンタップ時に実行されるIntent
-/// ControlConfigurationIntent: ControlWidgetで使うIntentはこのプロトコルに準拠する必要がある
 /// アプリを開いてPiPによるクリップボード監視を開始する
-struct StartMonitoringIntent: ControlConfigurationIntent {
+struct StartMonitoringIntent: AppIntent {
     static var title: LocalizedStringResource = "クリップボード自動保存を開始"
     static var description = IntentDescription("clipbooodでクリップボードの自動保存を開始します。")
     
     /// アプリを開く（PiPの起動にはフォアグラウンドが必要）
-    static var openAppWhenRun: Bool = true
-    
-    /// タイムアウト設定パラメーター
-    /// コントロールセンターで長押し時に表示される設定メニュー
-    @Parameter(title: "タイムアウト", default: .fiveMinutes)
-    var timeout: MonitoringTimeout
-    
     func perform() async throws -> some IntentResult {
-        // タイムアウト設定を保存（メインアプリが読み取る）
-        UserDefaults.standard.set(timeout.minutes, forKey: "MonitoringTimeoutMinutes")
-        UserDefaults.standard.set(timeout.minutes == 0, forKey: "TimeoutExplicitlySetToZero")
         
         // メインアプリに「PiP起動要求」を通知
         // ※アプリがフォアグラウンドになった時にPiPを起動するフラグを立てる

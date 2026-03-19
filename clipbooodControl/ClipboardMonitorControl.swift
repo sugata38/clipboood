@@ -6,12 +6,11 @@ import SwiftUI
 /// 長押し: タイムアウト設定のメニューを表示
 struct ClipboardMonitorControl: ControlWidget {
     var body: some ControlWidgetConfiguration {
-        // AppIntentControlConfiguration: 設定可能なパラメーター付きのコントロール
-        AppIntentControlConfiguration(
-            kind: "com.miyake.clipbooodApp.monitor",
-            intent: StartMonitoringIntent.self
-        ) { configuration in
-            ControlWidgetButton(action: configuration) {
+        // StaticControlConfiguration: パラメーターなしのシンプルなコントロール
+        StaticControlConfiguration(
+            kind: "com.miyake.clipbooodApp.monitor"
+        ) {
+            ControlWidgetButton(action: StartMonitoringIntent()) {
                 // コントロールセンターに表示されるラベル
                 Label("クリップボード自動保存", systemImage: "clipboard")
             }
