@@ -28,33 +28,32 @@ struct HelpView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
-                    
-                    // セクション1: クリップボード監視の始め方
-                    helpSection(
-                        icon: "play.circle.fill",
-                        iconColor: .green,
-                        title: "自動保存を開始する"
-                    ) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            stepRow(number: 1, text: "画面右上から下にスワイプして\nコントロールセンターを開く")
-                            stepRow(number: 2, text: "「クリップボード自動保存」ボタンをタップ")
-                            stepRow(number: 3, text: "小さなPiP（ピクチャー・イン・ピクチャー）\nウィンドウが表示されれば成功です")
-                        }
-                    }
-                    
-                    Divider()
-                    
-                    // セクション2: コントロールセンターへの追加方法
+                    // セクション1: コントロールセンターへの追加方法
                     helpSection(
                         icon: "plus.rectangle.on.rectangle",
                         iconColor: .blue,
-                        title: "コントロールセンターに追加"
+                        title: "1. コントロールセンターに追加"
                     ) {
                         VStack(alignment: .leading, spacing: 12) {
                             stepRow(number: 1, text: "コントロールセンターを開く")
                             stepRow(number: 2, text: "何もない場所を長押しして編集モードへ")
                             stepRow(number: 3, text: "「コントロールを追加」をタップ")
                             stepRow(number: 4, text: "clipbooodの「クリップボード自動保存」を追加")
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // セクション2: クリップボード監視の始め方
+                    helpSection(
+                        icon: "play.circle.fill",
+                        iconColor: .green,
+                        title: "2. 自動保存を開始する"
+                    ) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            stepRow(number: 1, text: "画面右上から下にスワイプして\nコントロールセンターを開く")
+                            stepRow(number: 2, text: "「クリップボード自動保存」ボタンをタップ")
+                            stepRow(number: 3, text: "小さなPiP（ピクチャー・イン・ピクチャー）\nウィンドウが表示されれば成功です")
                         }
                     }
                     

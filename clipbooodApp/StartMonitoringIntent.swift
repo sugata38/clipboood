@@ -33,7 +33,9 @@ struct StartMonitoringIntent: AppIntent {
     static var title: LocalizedStringResource = "クリップボード自動保存を開始"
     static var description = IntentDescription("clipbooodでクリップボードの自動保存を開始します。")
     
-    /// アプリを開く（PiPの起動にはフォアグラウンドが必要）
+    /// アプリを開く（PiPの起動にはメインアプリのフォアグラウンド化が必須）
+    static var openAppWhenRun: Bool = true
+    
     func perform() async throws -> some IntentResult {
         
         // メインアプリに「PiP起動要求」を通知
